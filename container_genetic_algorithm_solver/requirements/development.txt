@@ -1,0 +1,3 @@
+black==21.4b2
+pip-upgrader==1.4.15
+pipdeptree==2.2.0

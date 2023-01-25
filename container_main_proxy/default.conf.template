@@ -1,0 +1,15 @@
+upstream middle_proxy_servers {
+    server ${MIDDLE_PROXY_CONTAINER_1} weight=8 max_fails=1 fail_timeout=20s;
+    server ${MIDDLE_PROXY_CONTAINER_2} weight=8 max_fails=1 fail_timeout=20s;
+    server ${MIDDLE_PROXY_CONTAINER_3} backup;
+}
+
+server {
+    listen ${ACCESS_PORT};
+
+    location ~ ^/(hill_climbing|genetic_algorithm|simulated_annealing|neuronal_network) {
+        proxy_pass http://middle_proxy_servers;
+        proxy_pass_request_headers on;
+        proxy_pass_request_body on;
+    }
+}
