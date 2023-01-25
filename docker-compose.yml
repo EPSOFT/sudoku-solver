@@ -1,0 +1,257 @@
+version: "3.8"
+
+services:
+  main_proxy:
+    container_name: main_proxy
+    image: joseesco24/main_proxy
+    build:
+      context: container_main_proxy/.
+      dockerfile: production.Dockerfile
+    networks:
+      - middle_proxy_network
+    environment:
+      MIDDLE_PROXY_CONTAINER_1: ${MIDDLE_PROXY_CONTAINER_1}
+      MIDDLE_PROXY_CONTAINER_2: ${MIDDLE_PROXY_CONTAINER_2}
+      MIDDLE_PROXY_CONTAINER_3: ${MIDDLE_PROXY_CONTAINER_3}
+      ACCESS_PORT: ${MAIN_PROXY_PORT}
+    ports:
+      - target: ${MAIN_PROXY_PORT}
+        published: ${HOST_ACCESS_PORT}
+        protocol: tcp
+    depends_on:
+      - middle_proxy_1
+      - middle_proxy_2
+      - middle_proxy_3
+
+  middle_proxy_1:
+    container_name: middle_proxy_1
+    image: joseesco24/middle_proxy
+    build:
+      context: container_middle_proxy/.
+      dockerfile: production.Dockerfile
+    networks:
+      - solved_boards_database_network
+      - clients_database_network
+      - middle_proxy_network
+      - solvers_network
+    environment:
+      GENETIC_ALGORITHM_SOLVER_HEALTH_TEST_LINK: ${GENETIC_ALGORITHM_SOLVER_HEALTH_TEST_LINK}
+      GENETIC_ALGORITHM_SOLVER_LINK: ${GENETIC_ALGORITHM_SOLVER_LINK}
+      GENETIC_ALGORITHM_SOLVER_KEY: ${GENETIC_ALGORITHM_SOLVER_KEY}
+      HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK: ${HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK}
+      HILL_CLIMBING_SOLVER_LINK: ${HILL_CLIMBING_SOLVER_LINK}
+      HILL_CLIMBING_SOLVER_KEY: ${HILL_CLIMBING_SOLVER_KEY}
+      MAX_BOARD_SIZE: ${MAX_BOARD_SIZE}
+      MIN_BOARD_SIZE: ${MIN_BOARD_SIZE}
+      ACCESS_PORT: ${MIDDLE_PROXY_PORT}
+      ACCESS_KEY: ${MIDDLE_PROXY_KEY}
+    expose:
+      - ${MIDDLE_PROXY_PORT}
+    depends_on:
+      - genetic_algorithm_solver
+      - hill_climbing_solver
+    entrypoint: ["node", "api_server.mjs"]
+
+  middle_proxy_2:
+    container_name: middle_proxy_2
+    image: joseesco24/middle_proxy
+    build:
+      context: container_middle_proxy/.
+      dockerfile: production.Dockerfile
+    networks:
+      - solved_boards_database_network
+      - clients_database_network
+      - middle_proxy_network
+      - solvers_network
+    environment:
+      GENETIC_ALGORITHM_SOLVER_HEALTH_TEST_LINK: ${GENETIC_ALGORITHM_SOLVER_HEALTH_TEST_LINK}
+      GENETIC_ALGORITHM_SOLVER_LINK: ${GENETIC_ALGORITHM_SOLVER_LINK}
+      GENETIC_ALGORITHM_SOLVER_KEY: ${GENETIC_ALGORITHM_SOLVER_KEY}
+      HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK: ${HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK}
+      HILL_CLIMBING_SOLVER_LINK: ${HILL_CLIMBING_SOLVER_LINK}
+      HILL_CLIMBING_SOLVER_KEY: ${HILL_CLIMBING_SOLVER_KEY}
+      MAX_BOARD_SIZE: ${MAX_BOARD_SIZE}
+      MIN_BOARD_SIZE: ${MIN_BOARD_SIZE}
+      ACCESS_PORT: ${MIDDLE_PROXY_PORT}
+      ACCESS_KEY: ${MIDDLE_PROXY_KEY}
+    expose:
+      - ${MIDDLE_PROXY_PORT}
+    depends_on:
+      - genetic_algorithm_solver
+      - hill_climbing_solver
+    entrypoint: ["node", "api_server.mjs"]
+
+  middle_proxy_3:
+    container_name: middle_proxy_3
+    image: joseesco24/middle_proxy
+    build:
+      context: container_middle_proxy/.
+      dockerfile: production.Dockerfile
+    networks:
+      - solved_boards_database_network
+      - clients_database_network
+      - middle_proxy_network
+      - solvers_network
+    environment:
+      GENETIC_ALGORITHM_SOLVER_HEALTH_TEST_LINK: ${GENETIC_ALGORITHM_SOLVER_HEALTH_TEST_LINK}
+      GENETIC_ALGORITHM_SOLVER_LINK: ${GENETIC_ALGORITHM_SOLVER_LINK}
+      GENETIC_ALGORITHM_SOLVER_KEY: ${GENETIC_ALGORITHM_SOLVER_KEY}
+      HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK: ${HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK}
+      HILL_CLIMBING_SOLVER_LINK: ${HILL_CLIMBING_SOLVER_LINK}
+      HILL_CLIMBING_SOLVER_KEY: ${HILL_CLIMBING_SOLVER_KEY}
+      MAX_BOARD_SIZE: ${MAX_BOARD_SIZE}
+      MIN_BOARD_SIZE: ${MIN_BOARD_SIZE}
+      ACCESS_PORT: ${MIDDLE_PROXY_PORT}
+      ACCESS_KEY: ${MIDDLE_PROXY_KEY}
+    expose:
+      - ${MIDDLE_PROXY_PORT}
+    depends_on:
+      - genetic_algorithm_solver
+      - hill_climbing_solver
+    entrypoint: ["node", "api_server.mjs"]
+
+  hill_climbing_solver:
+    container_name: hill_climbing_solver
+    image: joseesco24/hill_climbing_solver
+    build:
+      context: container_hill_climbing_solver/.
+      dockerfile: production.Dockerfile
+    networks:
+      - solver_functions_load_balancer_network
+      - solved_boards_database_network
+      - solvers_network
+    environment:
+      SOLVER_FUNCTIONS_KEY: ${SOLVER_FUNCTIONS_KEY}
+      RANDOM_INITIALIZATION_LINK: ${RANDOM_INITIALIZATION_LINK}
+      FITNESS_SINGLE_SCORE_LINK: ${FITNESS_SINGLE_SCORE_LINK}
+      FITNESS_REPORT_SCORE_LINK: ${FITNESS_REPORT_SCORE_LINK}
+      RANDOM_MUTATION_LINK: ${RANDOM_MUTATION_LINK}
+      ACCESS_PORT: ${HILL_CLIMBING_SOLVER_PORT}
+      ACCESS_KEY: ${HILL_CLIMBING_SOLVER_KEY}
+    expose:
+      - ${HILL_CLIMBING_SOLVER_PORT}
+    depends_on:
+      - solver_functions_load_balancer
+    entrypoint: ["api_server"]
+
+  genetic_algorithm_solver:
+    container_name: genetic_algorithm_solver
+    image: joseesco24/genetic_algorithm_solver
+    build:
+      context: container_genetic_algorithm_solver/.
+      dockerfile: production.Dockerfile
+    networks:
+      - solver_functions_load_balancer_network
+      - solved_boards_database_network
+      - solvers_network
+    environment:
+      BUFFER_SIZE: ${GENETIC_ALGORITHM_BUFFER_SIZE}
+      SOLVER_FUNCTIONS_KEY: ${SOLVER_FUNCTIONS_KEY}
+      RANDOM_INITIALIZATION_LINK: ${RANDOM_INITIALIZATION_LINK}
+      FITNESS_SINGLE_SCORE_LINK: ${FITNESS_SINGLE_SCORE_LINK}
+      FITNESS_REPORT_SCORE_LINK: ${FITNESS_REPORT_SCORE_LINK}
+      RANDOM_MUTATION_LINK: ${RANDOM_MUTATION_LINK}
+      ACCESS_PORT: ${GENETIC_ALGORITHM_SOLVER_PORT}
+      ACCESS_KEY: ${GENETIC_ALGORITHM_SOLVER_KEY}
+    expose:
+      - ${GENETIC_ALGORITHM_SOLVER_PORT}
+    depends_on:
+      - solver_functions_load_balancer
+    entrypoint: ["python", "-u", "api_server.py"]
+
+  solver_functions_load_balancer:
+    container_name: solver_functions_load_balancer
+    image: joseesco24/solver_functions_load_balancer
+    build:
+      context: container_solver_functions_load_balancer/.
+      dockerfile: production.Dockerfile
+    networks:
+      - solver_functions_load_balancer_network
+      - solver_functions_network
+    environment:
+      SOLVER_FUNCTIONS_CONTAINER_1: ${SOLVER_FUNCTIONS_CONTAINER_1}
+      SOLVER_FUNCTIONS_CONTAINER_2: ${SOLVER_FUNCTIONS_CONTAINER_2}
+      SOLVER_FUNCTIONS_CONTAINER_3: ${SOLVER_FUNCTIONS_CONTAINER_3}
+      ACCESS_PORT: ${SOLVER_FUNCTIONS_LOAD_BALANCER_PORT}
+    expose:
+      - ${SOLVER_FUNCTIONS_LOAD_BALANCER_PORT}
+    depends_on:
+      - solver_functions_1
+      - solver_functions_2
+      - solver_functions_3
+
+  solver_functions_1:
+    container_name: solver_functions_1
+    image: joseesco24/solver_functions
+    build:
+      context: container_solver_functions/.
+      dockerfile: production.Dockerfile
+    networks:
+      - solver_functions_network
+    environment:
+      ACCESS_PORT: ${SOLVER_FUNCTIONS_PORT}
+      ACCESS_KEY: ${SOLVER_FUNCTIONS_KEY}
+    expose:
+      - ${SOLVER_FUNCTIONS_PORT}
+    entrypoint: ["python", "-u", "api_server.py"]
+
+  solver_functions_2:
+    container_name: solver_functions_2
+    image: joseesco24/solver_functions
+    build:
+      context: container_solver_functions/.
+      dockerfile: production.Dockerfile
+    networks:
+      - solver_functions_network
+    environment:
+      ACCESS_PORT: ${SOLVER_FUNCTIONS_PORT}
+      ACCESS_KEY: ${SOLVER_FUNCTIONS_KEY}
+    expose:
+      - ${SOLVER_FUNCTIONS_PORT}
+    entrypoint: ["python", "-u", "api_server.py"]
+
+  solver_functions_3:
+    container_name: solver_functions_3
+    image: joseesco24/solver_functions
+    build:
+      context: container_solver_functions/.
+      dockerfile: production.Dockerfile
+    networks:
+      - solver_functions_network
+    environment:
+      ACCESS_PORT: ${SOLVER_FUNCTIONS_PORT}
+      ACCESS_KEY: ${SOLVER_FUNCTIONS_KEY}
+    expose:
+      - ${SOLVER_FUNCTIONS_PORT}
+    entrypoint: ["python", "-u", "api_server.py"]
+
+networks:
+  solver_functions_network:
+    name: solver_functions_network
+    external: false
+    driver: bridge
+
+  solved_boards_database_network:
+    name: solved_boards_database_network
+    external: false
+    driver: bridge
+
+  clients_database_network:
+    name: clients_database_network
+    external: false
+    driver: bridge
+
+  middle_proxy_network:
+    name: middle_proxy_network
+    external: false
+    driver: bridge
+
+  solver_functions_load_balancer_network:
+    name: solver_functions_load_balancer_network
+    external: false
+    driver: bridge
+
+  solvers_network:
+    name: solvers_network
+    external: false
+    driver: bridge

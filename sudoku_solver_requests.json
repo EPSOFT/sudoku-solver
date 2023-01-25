@@ -1,0 +1,61 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "sudoku solver requests",
+  "dateExported": "2021-11-10T02:58:48.095Z",
+  "version": "1.1",
+  "folders": [],
+  "requests": [
+    {
+      "containerId": "",
+      "sortNum": 10000,
+      "headers": [
+        { "name": "Accept", "value": "*/*" },
+        {
+          "name": "User-Agent",
+          "value": "Thunder Client (https://www.thunderclient.io)"
+        },
+        { "name": "Authorization", "value": "cDb4F9118b1F1d33227115F09f97BB7a" }
+      ],
+      "colId": "bde38529-0d12-46da-8958-dc90de7ec44d",
+      "name": "hill climbing request",
+      "url": "http://localhost:3000/hill_climbing",
+      "method": "GET",
+      "modified": "2021-11-10T02:58:24.653Z",
+      "created": "2021-11-07T21:25:23.972Z",
+      "_id": "794ad747-514e-4a3a-acb1-cc3df0762289",
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"initial_board\": [\n    [0, 3, 0, 4],\n    [4, 0, 3, 2],\n    [1, 0, 0, 0],\n    [0, 0, 2, 1]\n  ],\n  \"zone_length\": 2,\n  \"zone_height\": 2,\n  \"restarts\": 2,\n  \"searchs\": 100\n}",
+        "form": []
+      },
+      "tests": []
+    },
+    {
+      "containerId": "",
+      "sortNum": 20000,
+      "headers": [
+        { "name": "Accept", "value": "*/*" },
+        {
+          "name": "User-Agent",
+          "value": "Thunder Client (https://www.thunderclient.io)"
+        },
+        { "name": "Authorization", "value": "cDb4F9118b1F1d33227115F09f97BB7a" }
+      ],
+      "colId": "bde38529-0d12-46da-8958-dc90de7ec44d",
+      "name": "genetic algorithm request",
+      "url": "http://localhost:3000/genetic_algorithm",
+      "method": "GET",
+      "modified": "2021-11-10T02:58:43.650Z",
+      "created": "2021-11-07T21:25:23.972Z",
+      "_id": "5269adf6-1f87-469c-a450-8698fc512d01",
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"initial_board\": [\n    [0, 3, 0, 4],\n    [4, 0, 3, 2],\n    [1, 0, 0, 0],\n    [0, 0, 2, 1]\n  ],\n  \"zone_length\": 2,\n  \"zone_height\": 2,\n  \"generations\": 8,\n  \"population\": 10,\n  \"crossover\": 0.6,\n  \"mutation\": 0.08\n}",
+        "form": []
+      },
+      "tests": []
+    }
+  ]
+}
